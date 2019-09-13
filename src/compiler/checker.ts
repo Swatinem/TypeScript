@@ -337,10 +337,50 @@ namespace ts {
         // for most of these, we perform the guard only on `checker` to avoid any possible
         // extra cost of calling `getParseTreeNode` when calling these functions from inside the
         // checker.
+        const nf = new Intl.NumberFormat();
+        function showBins(bins: any) {
+            const keys = Object.keys(bins)
+            keys.sort((a, b) => Number(a) - Number(b))
+
+            console.log(keys.map(k => `${String(k).padStart(10)}: ${nf.format(bins[k]).padStart(10)}`).join('\n'))
+        }
         const checker: TypeChecker = {
-            getNodeCount: () => sum(host.getSourceFiles(), "nodeCount"),
-            getIdentifierCount: () => sum(host.getSourceFiles(), "identifierCount"),
-            getSymbolCount: () => sum(host.getSourceFiles(), "symbolCount") + symbolCount,
+            getNodeCount: () => {
+                const bins: any = {}
+                for (const node of Array.from(allNodes)) {
+                    const names = Object.getOwnPropertyNames(node)
+
+                    // const key = `${names.length}: ${names.join(',')}`
+                    let key = 0
+
+                    key = names.length;
+                    bins[key] = (bins[key] || 0) + 1
+
+                    key = node.kind * 10 ** 2;
+                    bins[key] = (bins[key] || 0) + 1
+
+                    key = node.kind * 10 ** 5 + names.length;
+                    bins[key] = (bins[key] || 0) + 1
+                }
+                console.log(`Nodes: ${allNodes.size}`)
+                showBins(bins)
+                return sum(host.getSourceFiles(), "nodeCount")},
+            getIdentifierCount: () => {
+                return sum(host.getSourceFiles(), "identifierCount")
+            },
+            getSymbolCount: () => {
+                const bins: any = {}
+                for (const symbol of Array.from(allSymbols)) {
+                    const names = Object.getOwnPropertyNames(symbol)
+
+                    // const key = `${names.length}: ${names.join(',')}`
+                    const key = names.length;
+                    bins[key] = (bins[key] || 0) + 1
+                }
+                console.log(`Symbols: ${allSymbols.size}`)
+                showBins(bins)
+                return sum(host.getSourceFiles(), "symbolCount") + symbolCount;
+            },
             getTypeCount: () => typeCount,
             getRelationCacheSizes: () => ({
                 assignable: assignableRelation.size,

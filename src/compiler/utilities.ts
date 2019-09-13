@@ -7118,7 +7118,11 @@ namespace ts {
         getSourceMapSourceConstructor(): new (fileName: string, text: string, skipTrivia?: (pos: number) => number) => SourceMapSource;
     }
 
+    export const allNodes = new Set<Node>()
+    export const allSymbols = new Set<Symbol>()
+
     function Symbol(this: Symbol, flags: SymbolFlags, name: __String) {
+        allSymbols.add(this);
         this.flags = flags;
         this.escapedName = name;
         this.declarations = undefined!;
@@ -7137,7 +7141,9 @@ namespace ts {
 
     function Signature() {}
 
+
     function Node(this: Node, kind: SyntaxKind, pos: number, end: number) {
+        allNodes.add(this);
         this.pos = pos;
         this.end = end;
         this.kind = kind;
