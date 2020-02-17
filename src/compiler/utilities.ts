@@ -5566,6 +5566,24 @@ namespace ts {
         this.flowNode = undefined;
     }
 
+    function PrivateIdentifier(this: Mutable<Node>, kind: SyntaxKind, pos: number, end: number) {
+        this.pos = pos;
+        this.end = end;
+        this.kind = kind;
+        this.id = 0;
+        this.flags = NodeFlags.None;
+        this.transformFlags = TransformFlags.None;
+        this.parent = undefined!;
+        this.original = undefined;
+        this.flowNode = undefined;
+    }
+
+    function SourceFile(this: Mutable<Node>, kind: SyntaxKind, pos: number, end: number) {
+        this.pos = pos;
+        this.end = end;
+        this.kind = kind;
+    }
+
     function SourceMapSource(this: SourceMapSource, fileName: string, text: string, skipTrivia?: (pos: number) => number) {
         this.fileName = fileName;
         this.text = text;
@@ -5577,8 +5595,8 @@ namespace ts {
         getNodeConstructor: () => <any>Node,
         getTokenConstructor: () => <any>Token,
         getIdentifierConstructor: () => <any>Identifier,
-        getPrivateIdentifierConstructor: () => <any>Node,
-        getSourceFileConstructor: () => <any>Node,
+        getPrivateIdentifierConstructor: () => <any>PrivateIdentifier,
+        getSourceFileConstructor: () => <any>SourceFile,
         getSymbolConstructor: () => <any>Symbol,
         getTypeConstructor: () => <any>Type,
         getSignatureConstructor: () => <any>Signature,
